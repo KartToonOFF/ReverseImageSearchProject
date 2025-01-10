@@ -2,18 +2,17 @@ const dropArea = document.getElementById('drop-area');
 const fileInput = document.getElementById('file-input');
 const placeholderIcon = 'file-placeholder.jpg';
 
-// Utility function to prevent default browser behavior
+// Empeche Google d'ouvrir l'image
 function preventDefaults(e) {
   e.preventDefault();
   e.stopPropagation();
 }
 
-// Preventing default browser behavior when dragging a file over the container
 dropArea.addEventListener('dragover', preventDefaults);
 dropArea.addEventListener('dragenter', preventDefaults);
 dropArea.addEventListener('dragleave', preventDefaults);
 
-// Handling dropping files into the area
+// Script pour pouvoir glisser déposer les fichiers
 dropArea.addEventListener('drop', handleDrop);
 
 dropArea.addEventListener('dragover', () => {
@@ -25,38 +24,41 @@ dropArea.addEventListener('dragleave', () => {
 });
 
 function handleDrop(e) {
+  
+  // Empeche Google d'ouvrir le fichier quand il est déposé  
   e.preventDefault();
 
-  // Getting the list of dragged files
+  // Prend la liste des fichiers uploadés
   const files = e.dataTransfer.files;
 
-  // Checking if there are any files
+  // Regarde si il y a un fichiers
   if (files.length) {
-    // Assigning the files to the hidden input from the first step
+    // Assigne les fichiers a files
     fileInput.files = files;
 
-    // Processing the files for previews (next step)
+    // Envoi les fichiers a la fonction handleFiles pour les afficher
     handleFiles(files);
   }
 }
 
 function handleFiles(files) {
   for (const file of files) {
-    // Initializing the FileReader API and reading the file
+    // Initialisation de l'affichage
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
-    // Once the file has been loaded, fire the processing
+    // Quand le fichier est uploadé, lance l'affichage de l'image
     reader.onloadend = function (e) {
       const preview = document.createElement('img');
-
+      
+      // Affiche l'image si le type est valide, sinon affiche une icone par défaut
       if (isValidFileType(file)) {
         preview.src = e.target.result;
       } else {
         preview.src = placeholderIcon;
       }
 
-      // Apply styling
+      //Ajoute le CSS
       preview.classList.add('preview-image');
       const previewContainer = document.getElementById('preview-container');
       previewContainer.appendChild(preview);
@@ -65,6 +67,7 @@ function handleFiles(files) {
 }
 
 function isValidFileType(file) {
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  // Défini les types d'images autorisées
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
   return allowedTypes.includes(file.type);
 }
